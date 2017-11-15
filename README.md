@@ -1,0 +1,2 @@
+# kalkulatorwydatkow
+Projekt
