@@ -6,10 +6,29 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script>
+		function load(docName) 
+		{
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function()
+			{
+				if(this.readyState == 4 && this.status == 200)
+				{
+					document.getElementById("navs").style.display = 'none';
+					document.getElementById("frm").innerHTML = this.responseText;
+				}
+			};
+			xhttp.open("GET",docName,true);
+			xhttp.send();
+		}
+	</script>
 </head>
 <body>
 	<img src="main.jpg" width=400 height=300/>
 	<br>
-	<button type="button">Zaloguj</button>
-	<button type="button">Załóż grupę rozliczeniową</button>
+	<p id="navs">
+	<button type="button" onClick="load('login.html')">Zaloguj</button>
+	<button type="button" onClick="load('create.html')">Załóż grupę rozliczeniową</button>
+	</p>
+	<p id="frm"></p>
 </body>
