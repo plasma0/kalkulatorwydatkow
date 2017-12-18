@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="uek.pojo.Group" table="GROUPS">
+        <meta attribute="class-description">Klasa</meta>
+        <id name="name" type="java.lang.String" column="login"></id>
+        <property name="password" type="java.lang.String" column="password"></property>
+    </class>
+</hibernate-mapping>
