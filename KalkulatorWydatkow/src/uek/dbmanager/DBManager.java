@@ -53,6 +53,7 @@ public class DBManager {
         }catch (HibernateException e){
             if(tx!=null) tx.rollback();
             e.printStackTrace();
+            return null;
         }finally {
             session.close();
         }
@@ -70,6 +71,7 @@ public class DBManager {
         }catch (HibernateException e){
             if(tx!=null) tx.rollback();
             e.printStackTrace();
+            return null;
         }finally {
             session.close();
         }
@@ -97,6 +99,25 @@ public class DBManager {
             session.close();
         }
         return true;
+    }
+    public List<DeviceUser> getDevU(String groupID)
+    {
+        List<DeviceUser> list;
+        Transaction tx = null;
+        Session session = sessionFactory.openSession();
+        try {
+            tx = session.beginTransaction();
+            list = session.createQuery("FROM DEVICEUSER WHERE groupid="+groupID).list();
+            tx.commit();
+        }catch (HibernateException e)
+        {
+            if(tx!=null)tx.rollback();
+            e.printStackTrace();
+            return null;
         }
+        finally {
+            session.close();
+        }
+        return list;
     }
 }
