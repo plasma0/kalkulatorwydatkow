@@ -23,23 +23,28 @@ public class View {
     {
         DBManager dbManager = new DBManager();
         Group acquired = dbManager.getGroup(group.getName());
-        if(acquired.getPassword()==group.getPassword())
+        if(acquired.getPassword().equals(group.getPassword()))
         {
-            List<DeviceUser> list = dbManager.getDevU(group.getName());
+            DBManager dbManager1 = new DBManager();
             String flows = "";
-            int count = list.size();
-            double sum = 0;
-            for (Iterator iter = list.iterator();iter.hasNext();)
+            List<DeviceUser> members = dbManager1.getMembersOf(group);
+            if(members==null)modelMap.addAttribute("flows","Błąd odczytu lub grupa jest pusta");
+            else
             {
-                sum += ((DeviceUser)iter.next()).getContrib();
+                double mean = 0;
+                int memLength = members.size();
+                for (int i = 0; i < memLength; i++) {
+                    mean += members.get(i).getContrib();
+                }
+                mean = mean / memLength;
+                MeanCalculator mc = new MeanCalculator(mean);
+                for (int i = 0; i < memLength; i++) {
+                    flows += ("<br>" + members.get(i).getToken() + ": " + mc.mountChain(members.get(i).getContrib()));
+                }
+                modelMap.addAttribute("flows",flows);
             }
-            double mean = sum/count;
-            for (int i = 0; i < count; i++) {
-                flows += (list.get(i).getToken()+": -"+(list.get(i).getContrib()-mean)+"<br>");
-            }
-            modelMap.addAttribute("flows",flows);
-
         }
+        else modelMap.addAttribute("flows","Login i hasło nie pasują do siebie");
         return "table";
     }
 }

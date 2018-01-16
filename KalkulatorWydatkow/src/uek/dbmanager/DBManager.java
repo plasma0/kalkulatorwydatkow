@@ -59,24 +59,7 @@ public class DBManager {
         }
         return group;
     }
-    public List<DeviceUser> getByToken(String token)
-    {
-        List<DeviceUser> toSend = null;
-        Transaction tx = null;
-        Session session = sessionFactory.openSession();
-        try {
-            tx = session.beginTransaction();
-            toSend = session.createQuery("FROM DEVICEUSER WHERE token="+token).list();
-            tx.commit();
-        }catch (HibernateException e){
-            if(tx!=null) tx.rollback();
-            e.printStackTrace();
-            return null;
-        }finally {
-            session.close();
-        }
-        return toSend;
-    }
+
     public boolean updateContribution(String token, String groupid, double add)
     {
         DeviceUser deviceUser = null;
@@ -84,11 +67,10 @@ public class DBManager {
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            deviceUser = (DeviceUser) session.createQuery("FROM DEVICEUSER WHERE token=" + token + " AND groupid=" + groupid).list().get(0);
-            session.evict(deviceUser);
-            double current = deviceUser.getContrib();
-            current += add;
-            deviceUser.setContrib(current);
+            deviceUser = (DeviceUser) session.get(DeviceUser.class, token);
+            double contrib = deviceUser.getContrib();
+            contrib += add;
+            deviceUser.setContrib(contrib);
             session.update(deviceUser);
             tx.commit();
         }catch (HibernateException e) {
@@ -100,24 +82,41 @@ public class DBManager {
         }
         return true;
     }
-    public List<DeviceUser> getDevU(String groupID)
+
+    public String field2hql(String table, String field, String value)
     {
-        List<DeviceUser> list;
+        String hql = "FROM ";
+        hql += table;
+        hql += " WHERE ";
+        hql += field;
+        hql += "=";
+        hql += '\'';
+        hql += value;
+        hql += '\'';
+        return  hql;
+    }
+
+    public List<DeviceUser> getMembersOf(Group group)
+    {
+        List<DeviceUser> members = null;
         Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
             tx = session.beginTransaction();
-            list = session.createQuery("FROM DEVICEUSER WHERE groupid="+groupID).list();
+            List<DeviceUser> raw = session.createQuery("FROM DeviceUser as du WHERE du.groupid="+'\''+group.getName()+'\'').list();
+            if(raw==null) return null;
+            System.out.println(raw.size());
+            members = raw;
             tx.commit();
         }catch (HibernateException e)
         {
-            if(tx!=null)tx.rollback();
+            if(tx != null) tx.rollback();
             e.printStackTrace();
-            return null;
         }
         finally {
             session.close();
         }
-        return list;
+        return members;
     }
+
 }

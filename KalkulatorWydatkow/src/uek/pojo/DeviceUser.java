@@ -5,6 +5,9 @@ public class DeviceUser {
     private String groupid;
     private double contrib;
 
+    public DeviceUser()
+    {}
+
     public DeviceUser(String token, String groupid, double contrib) {
         this.token = token;
         this.groupid = groupid;
